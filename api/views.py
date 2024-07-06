@@ -1,4 +1,4 @@
-
+import socket
 from django.http import JsonResponse
 import requests
 import geocoder
@@ -8,7 +8,8 @@ from ipware import get_client_ip
 
 def index(request):
     # Get the visitor's IP address
-    client_ip, is_routable = get_client_ip(request)
+    client_ip = ''.join(socket.gethostbyname_ex(socket.gethostname())[2])
+    # client_ip, is_routable = get_client_ip(request)
     if client_ip is None:
         client_ip = 'Unknown'
 
