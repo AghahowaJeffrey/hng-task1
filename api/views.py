@@ -1,19 +1,19 @@
 
 from django.http import JsonResponse
-import socket
 import requests
 import geocoder
 from hng_stage1.settings import WEATHER_API_KEY
+from ipware import get_client_ip
+
 
 def index(request):
-    # Get the visitor's hostname and IP address
-    client_ip = request.META.get('REMOTE_ADDR', None)
-    ip = client_ip
+    # Get the visitor's IP address
 
-    # Request information about the IP address from ipinfo.io
+    client_ip, is_routable = get_client_ip(request)
+    print(f"apiaddress = {client_ip}")
 
-    cliet_ip = geocoder.ip("me")
-    city = cliet_ip.city
+    geo = geocoder.ip('me')
+    city = geo.city
 
     # Fetch temperature from a weather API (example)
     weather_api_key = WEATHER_API_KEY
@@ -28,7 +28,7 @@ def index(request):
 
     # Construct JSON response
     response_data = {
-        'client_ip': ip,
+        'client_ip': client_ip,
         'location': city,
         'greeting': f"Hello, {request.GET.get('visitor_name', 'Anonymous')}!, the temperature is {temperature} degrees Celsius in {city}"
     }
