@@ -7,14 +7,13 @@ from hng_stage1.settings import WEATHER_API_KEY
 
 def index(request):
     # Get the visitor's hostname and IP address
-    hostname = socket.gethostname()
-    ip = socket.gethostbyname(hostname)
+    client_ip = request.META.get('REMOTE_ADDR', None)
+    ip = client_ip
 
     # Request information about the IP address from ipinfo.io
-    ip_ad = geocoder.ip(ip)
 
-    client_ip = geocoder.ip("me")
-    city = client_ip.city
+    cliet_ip = geocoder.ip("me")
+    city = cliet_ip.city
 
     # Fetch temperature from a weather API (example)
     weather_api_key = WEATHER_API_KEY
