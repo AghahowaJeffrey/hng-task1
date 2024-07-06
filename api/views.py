@@ -1,25 +1,31 @@
-import socket
 from django.http import JsonResponse
 import requests
-import geocoder
 from hng_stage1.settings import WEATHER_API_KEY
-import pprint
 from ipware import get_client_ip
 
 
 def index(request):
     # Get the visitor's IP address
 
-    print(pprint.pformat(request.META))
-    client_ip = request.META.get('HTTP_X_FORWARDED_FOR')
+    client_ip = request.META.get('HTTP_X_REAL_IP')
     if client_ip:
         client_ip = client_ip.split(',')[0]
     else:
         client_ip = request.META.get('REMOTE_ADDR')
-    print(f"IP Address: {client_ip}")
 
-    geo = geocoder.ip('me')
-    city = geo.city or 'Unknown'
+    def get_location():
+        ip_address = client_ip
+        response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+        location_data = {
+            "ip": ip_address,
+            "city": response.get("city"),
+            "region": response.get("region"),
+            "country": response.get("country_name")
+        }
+        return location_data
+
+    location = get_location()
+    city = location['city']
 
     # Fetch temperature from a weather API (example)
     weather_api_key = WEATHER_API_KEY
