@@ -8,12 +8,14 @@ from ipware import get_client_ip
 
 def index(request):
     # Get the visitor's IP address
-
     client_ip, is_routable = get_client_ip(request)
-    print(f"apiaddress = {client_ip}")
+    if client_ip is None:
+        client_ip = 'Unknown'
+
+    print(f"IP Address: {client_ip}")
 
     geo = geocoder.ip('me')
-    city = geo.city
+    city = geo.city or 'Unknown'
 
     # Fetch temperature from a weather API (example)
     weather_api_key = WEATHER_API_KEY
