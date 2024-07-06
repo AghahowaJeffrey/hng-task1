@@ -3,16 +3,19 @@ from django.http import JsonResponse
 import requests
 import geocoder
 from hng_stage1.settings import WEATHER_API_KEY
+import pprint
 from ipware import get_client_ip
 
 
 def index(request):
     # Get the visitor's IP address
-    client_ip = ''.join(socket.gethostbyname_ex(socket.gethostname())[2])
-    # client_ip, is_routable = get_client_ip(request)
-    if client_ip is None:
-        client_ip = 'Unknown'
 
+    print(pprint.pformat(request.META))
+    client_ip = request.META.get('HTTP_X_FORWARDED_FOR')
+    if client_ip:
+        client_ip = client_ip.split(',')[0]
+    else:
+        client_ip = request.META.get('REMOTE_ADDR')
     print(f"IP Address: {client_ip}")
 
     geo = geocoder.ip('me')
